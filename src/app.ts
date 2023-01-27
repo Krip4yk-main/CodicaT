@@ -3,13 +3,14 @@ import bodyParser from "body-parser"
 import BankController from './controllers/bank.controller';
 import {Sequelize} from "sequelize-typescript";
 import * as models from "./models";
+import {CrudController} from "./controllers/crud.controller";
 
 require("dotenv").config()
 class App {
     public app: express.Application;
     public port: number;
 
-    constructor(controllers: BankController[], port: number) {
+    constructor(controllers: CrudController[], port: number) {
         this.app = express();
         this.port = port;
 
@@ -23,7 +24,7 @@ class App {
         this.app.use(bodyParser.urlencoded({extended: true}))
     }
 
-    private initializeControllers(controllers: BankController[]) {
+    private initializeControllers(controllers: CrudController[]) {
         controllers.forEach((controller) => {
             this.app.use('/', controller.router);
         });

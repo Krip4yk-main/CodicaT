@@ -1,25 +1,24 @@
-import * as express from 'express';
+import * as express from "express";
+import {Status} from "../models";
 import {BAD_REQUEST, ERROR, OK} from "../utils/responces";
-import {Bank} from "../models";
 
-class BankController {
-    public path = '/bank';
+export class CrudController {
     public router = express.Router();
 
-    constructor() {
-        this.initializeRoutes();
+    constructor(path: string) {
+        this.initializeRoutes(path);
     }
 
-    public initializeRoutes() {
-        this.router.get(this.path, this.getAll);
-        this.router.get(this.path+'/id', this.getOne); //for some reasons /:id do
-        this.router.post(this.path+"/update", this.update);
-        this.router.post(this.path, this.create);
-        this.router.delete(this.path, this.delete);
+    public initializeRoutes(path: string) {
+        this.router.get(path, this.getAll);
+        this.router.get(path+'/id', this.getOne); //for some reasons /:id do
+        this.router.post(path+"/update", this.update);
+        this.router.post(path, this.create);
+        this.router.delete(path, this.delete);
     }
 
     getAll = (request: express.Request, response: express.Response) => {
-        Bank.findAll().then(res => {
+        Status.findAll().then(res => {
             OK(response, res)
         }).catch(error => {
             console.error(error)
@@ -40,7 +39,7 @@ class BankController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Bank.findOne({
+        Status.findOne({
             where: {
                 id: data.id
             }
@@ -65,9 +64,8 @@ class BankController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Bank.create({
-            name: data.name,
-            balance: data.balance
+        Status.create({
+            name: data.name
         }).then(res => {
             OK(response, res)
         }).catch(error => {
@@ -89,7 +87,7 @@ class BankController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Bank.update({
+        Status.update({
             name: data.name
         }, {
             where: {
@@ -116,7 +114,7 @@ class BankController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Bank.destroy({
+        Status.destroy({
             where: {
                 id: data.id
             }
@@ -128,5 +126,3 @@ class BankController {
         })
     }
 }
-
-export default BankController;

@@ -12,7 +12,9 @@ class TransactionsController {
 
     public initializeRoutes() {
         this.router.get(this.path, this.getAllTransactions);
-        this.router.post(this.path, this.createATransactions);
+        this.router.post(this.path+"/update", this.updateTransactions);
+        this.router.post(this.path, this.createTransactions);
+        this.router.delete(this.path, this.deleteTransactions);
     }
 
     getAllTransactions = async (request: express.Request, response: express.Response) => {
@@ -20,7 +22,7 @@ class TransactionsController {
         OK(response, transactions);
     }
 
-    createATransactions = async (request: express.Request, response: express.Response) => {
+    createTransactions = async (request: express.Request, response: express.Response) => {
         const data = JSON.parse(JSON.stringify(request.body)).data;
         const transactions = await Transactions.create({
             bankId: data.bankId,
@@ -29,6 +31,14 @@ class TransactionsController {
             status: data.status,
         })
         OK(response, transactions)
+    }
+
+    updateTransactions = async (request: express.Request, response: express.Response) => {
+
+    }
+
+    deleteTransactions = async (request: express.Request, response: express.Response) => {
+
     }
 }
 
