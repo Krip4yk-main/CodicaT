@@ -106,3 +106,4 @@ dist
 # others
 .idea
 package-lock.json
+postgres-data
