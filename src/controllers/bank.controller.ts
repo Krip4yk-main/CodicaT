@@ -23,7 +23,8 @@ class BankController {
     createABank = async (request: express.Request, response: express.Response) => {
         const data = JSON.parse(JSON.stringify(request.body)).data;
         const bank = await Bank.create({
-            name: data.name
+            name: data.name,
+            balance: data.balance
         })
         OK(response, bank)
     }

@@ -29,7 +29,7 @@ class App {
         });
     }
 
-    private initializeDatabase() { // todo: CHANGE MYSQL TO POSTGRESQL
+    private initializeDatabase() {
         const dbHost = process.env.DB_HOST as string;
         const dbPort = Number(process.env.DB_PORT);
         const dbName = process.env.POSTGRES_DB as string;
