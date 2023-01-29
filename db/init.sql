@@ -37,13 +37,14 @@ values ('Default status');
 drop table if exists transactions;
 create table if not exists transactions
 (
-    id          serial       not null primary key,
-    "bankId"    int          not null references bank (id),
-    amount      int          not null,
-    category    varchar(128) not null references category (name) default 'Default category',
-    status      varchar(64)  not null references status (name)   default 'Default status',
-    "createdAt" timestamp    not null                            default now(),
-    "updatedAt" timestamp    not null                            default now()
+    id          serial        not null primary key,
+    "bankId"    int           not null references bank (id),
+    amount      int           not null,
+    categories  varchar(64)[] not null                          default array ['Default category'],
+    --idk how to reference like (each element of categories) referenced by category (id)
+    status      varchar(64)   not null references status (name) default 'Default status',
+    "createdAt" timestamp     not null                          default now(),
+    "updatedAt" timestamp     not null                          default now()
 );
 
 insert into transactions ("bankId", amount)

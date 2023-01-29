@@ -2,7 +2,7 @@ export default interface TransactionsModel {
     id?: number,
     bankId: number,
     amount: number,
-    category: string,
+    categories: string[] | string,
     status: string,
     createdAt?: any,
     updatedAta?: any

@@ -1,26 +1,18 @@
 import * as express from "express";
-import {Status} from "../models";
 import {BAD_REQUEST, ERROR, OK} from "../utils/responces";
 
 export class CrudController {
     public router = express.Router();
+    private db_model: any;
 
-    constructor(path: string) {
-        this.initializeRoutes(path);
-    }
-
-    public initializeRoutes(path: string) {
-        this.router.get(path, this.getAll);
-        this.router.get(path+'/id', this.getOne); //for some reasons /:id do
-        this.router.post(path+"/update", this.update);
-        this.router.post(path, this.create);
-        this.router.delete(path, this.delete);
+    constructor(db_model: any) {
+        this.db_model = db_model;
     }
 
     getAll = (request: express.Request, response: express.Response) => {
-        Status.findAll().then(res => {
+        this.db_model.findAll().then((res: any) => {
             OK(response, res)
-        }).catch(error => {
+        }).catch((error: any) => {
             console.error(error)
             ERROR(response, {message: error})
         });
@@ -30,8 +22,8 @@ export class CrudController {
         let data: any
         try {
             data = JSON.parse(JSON.stringify(request.query));
-            if (!data.id) {
-                BAD_REQUEST(response, {message: "Missing arguments, read docs!"})
+            if (!data || !data.id) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
                 return;
             }
         } catch (error) {
@@ -39,13 +31,13 @@ export class CrudController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Status.findOne({
+        this.db_model.findOne({
             where: {
                 id: data.id
             }
-        }).then(res => {
+        }).then((res: any) => {
             OK(response, res)
-        }).catch(error => {
+        }).catch((error: any) => {
             console.error(error)
             ERROR(response, {message: error})
         });
@@ -55,8 +47,8 @@ export class CrudController {
         let data: any
         try {
             data = JSON.parse(JSON.stringify(request.body)).data;
-            if (!data.name || !data.balance) {
-                BAD_REQUEST(response, {message: "Missing arguments, read docs!"})
+            if (!data || !data.name) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
                 return;
             }
         } catch (error) {
@@ -64,11 +56,11 @@ export class CrudController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Status.create({
+        this.db_model.create({
             name: data.name
-        }).then(res => {
+        }).then((res: any) => {
             OK(response, res)
-        }).catch(error => {
+        }).catch((error: any) => {
             console.error(error)
             ERROR(response, {message: error})
         })
@@ -78,8 +70,8 @@ export class CrudController {
         let data: any
         try {
             data = JSON.parse(JSON.stringify(request.body)).data;
-            if (!data.id || !data.name) {
-                BAD_REQUEST(response, {message: "Missing arguments, read docs!"})
+            if (!data || !data.id || !data.name) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
                 return;
             }
         } catch (error) {
@@ -87,15 +79,15 @@ export class CrudController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Status.update({
+        this.db_model.update({
             name: data.name
         }, {
             where: {
                 id: data.id
             }
-        }).then(res => {
+        }).then((res: any) => {
             OK(response, {affected: res})
-        }).catch(error => {
+        }).catch((error: any) => {
             console.error(error)
             ERROR(response, {message: error})
         })
@@ -105,8 +97,8 @@ export class CrudController {
         let data: any
         try {
             data = JSON.parse(JSON.stringify(request.body)).data;
-            if (!data.id) {
-                BAD_REQUEST(response, {message: "Missing arguments, read docs!"})
+            if (!data || !data.id) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
                 return;
             }
         } catch (error) {
@@ -114,13 +106,13 @@ export class CrudController {
             BAD_REQUEST(response, {message: error})
             return;
         }
-        Status.destroy({
+        this.db_model.destroy({
             where: {
                 id: data.id
             }
-        }).then(res => {
+        }).then((res: any) => {
             OK(response, {affected: res})
-        }).catch(error => {
+        }).catch((error: any) => {
             console.error(error)
             ERROR(response, {message: error})
         })

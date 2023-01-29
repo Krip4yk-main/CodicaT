@@ -1,11 +1,12 @@
-import express, {Application, Request, Response} from "express"
+import express from "express"
 import bodyParser from "body-parser"
-import BankController from './controllers/bank.controller';
 import {Sequelize} from "sequelize-typescript";
 import * as models from "./models";
 import {CrudController} from "./controllers/crud.controller";
+import path from "path";
 
 require("dotenv").config()
+
 class App {
     public app: express.Application;
     public port: number;
@@ -54,6 +55,8 @@ class App {
     public listen() {
         this.app.listen(this.port, () => {
             console.log(`App listening on the port ${this.port}`);
+            const sound = require("sound-play");
+            sound.play(path.join(__dirname, "../data/beep-07a.wav"), 1);
         });
     }
 }

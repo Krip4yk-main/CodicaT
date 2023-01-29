@@ -1,7 +1,4 @@
 import App from './app';
-import BankController from "./controllers/bank.controller";
-import CategoryController from "./controllers/category.controller";
-import StatusController from "./controllers/status.controller";
 import * as controllers from "./controllers"
 
 const port = Number(process.env.PORT)
@@ -14,5 +11,6 @@ const app = new App(
     newControllers,
     port,
 );
+
 
 app.listen();

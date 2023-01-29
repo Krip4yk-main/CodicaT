@@ -1,6 +1,5 @@
 import {Column, DataType, Model, Table} from "sequelize-typescript";
 import TransactionsModel from "../interfaces/transactions.interface";
-import BankModel from "./bank.model";
 
 @Table({tableName: "transactions", timestamps: true})
 class Transactions extends Model<TransactionsModel> {
@@ -11,7 +10,7 @@ class Transactions extends Model<TransactionsModel> {
     amount: number
 
     @Column({type: DataType.STRING, allowNull: false})
-    category: string
+    categories: string[]
 
     @Column({type: DataType.STRING, allowNull: false})
     status: string
