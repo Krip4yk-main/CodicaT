@@ -217,12 +217,13 @@ class TransactionsController extends CrudController {
                                 where: {
                                     id: transaction.id
                                 }
+                            }).then(() => {
+                                console.error(error)
+                                ERROR(response, {message: error})
                             }).catch(error => {
                                 console.error(error)
                                 ERROR(response, {message: "Cannot return state to previous. Please contact administrator!"})
                             })
-                            console.error(error)
-                            ERROR(response, {message: error})
                         })
                     }).catch((error: any) => {
                         Transactions.update({
@@ -234,12 +235,13 @@ class TransactionsController extends CrudController {
                             where: {
                                 id: transaction.id
                             }
+                        }).then(() => {
+                            console.error(error)
+                            ERROR(response, {message: error})
                         }).catch(error => {
                             console.error(error)
                             ERROR(response, {message: "Cannot return state to previous. Please contact administrator!"})
                         })
-                        console.error(error)
-                        ERROR(response, {message: error})
                     })
                 }
             }).catch((error: any) => {
@@ -259,6 +261,72 @@ class TransactionsController extends CrudController {
         })
         parsed_categories = parsed_categories.substring(0, parsed_categories.length - 1) + "}";
         return parsed_categories
+    }
+
+    delete = (request: express.Request, response: express.Response) => {
+        let data: any
+        try {
+            data = JSON.parse(JSON.stringify(request.body)).data;
+            if (!data || !data.id) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
+                return;
+            }
+        } catch (error) {
+            console.error(error)
+            BAD_REQUEST(response, {message: error})
+            return;
+        }
+        Transactions.findOne({
+            where: {
+                id: data.id
+            }
+        }).then((transaction: any) => {
+            Bank.findOne({
+                where: {
+                    id: transaction.bankId
+                }
+            }).then((bank: any) => {
+                const balance = bank.balance;
+                Bank.update({
+                    balance: (balance - transaction.amount)
+                }, {
+                    where: {
+                        id: bank.id
+                    }
+                }).then(() => {
+                    Transactions.destroy({
+                        where: {
+                            id: data.id
+                        }
+                    }).then((res: any) => {
+                        OK(response, {affected: res})
+                    }).catch((error: any) => {
+                        Bank.update({
+                            balance: balance
+                        }, {
+                            where: {
+                                id: bank.id
+                            }
+                        }).then(() => {
+                            console.error(error)
+                            ERROR(response, {message: error})
+                        }).catch((error) => {
+                            console.error(error)
+                            ERROR(response, {message: "Cannot return state to previous. Please contact administrator!"})
+                        })
+                    })
+                }).catch((error: any) => {
+                    console.error(error)
+                    ERROR(response, {message: error})
+                })
+            }).catch((error: any) => {
+                console.error(error)
+                ERROR(response, {message: error})
+            })
+        }).catch((error: any) => {
+            console.error(error)
+            ERROR(response, {message: error})
+        })
     }
 }
 
