@@ -14,10 +14,59 @@ class TransactionsController extends CrudController {
 
     public initializeRoutes() {
         this.router.get(this.path, this.getAll);
+        this.router.get(this.path + '/pagi', this.getAllPagi);
+        this.router.get(this.path + '/size', this.getCountOf);
+        this.router.get(this.path + '/hook', this.getHook);
         this.router.get(this.path + '/id', this.getOne); //for some reasons /:id do
         this.router.post(this.path + "/update", this.update);
         this.router.post(this.path, this.create);
         this.router.delete(this.path, this.delete);
+    }
+
+    getHook = (request: express.Request, response: express.Response) => {
+        for (let i = 0; i < 10; i++) {
+            OK(response, i);
+        }
+    }
+
+    getAllPagi = (request: express.Request, response: express.Response) => {
+        let data: any
+        try {
+            data = JSON.parse(JSON.stringify(request.query));
+            if (!data || !data.limit || !data.offset) {
+                BAD_REQUEST(response, {message: "Missing arguments or bad JSON, read docs!"})
+                return;
+            }
+            if (data.limit > 1000) {
+                BAD_REQUEST(response, {message: "Limit cannot be more than 1000"})
+                return;
+            }
+        } catch (error) {
+            console.error(error)
+            BAD_REQUEST(response, {message: error})
+            return;
+        }
+        Transactions.findAll({
+            limit: data.limit,
+            offset: data.offset
+        }).then((res: any) => {
+            OK(response, res)
+        }).catch((error: any) => {
+            console.error(error)
+            ERROR(response, {message: error})
+        });
+    }
+
+    getCountOf = (request: express.Request, response: express.Response) => {
+        Transactions.sequelize?.query(`
+            select count(id)
+            from transactions;
+        `).then((res: any) => {
+            OK(response, res[0][0])
+        }).catch((error: any) => {
+            console.error(error)
+            ERROR(response, {message: error})
+        });
     }
 
     create = async (request: express.Request, response: express.Response) => {
