@@ -27,7 +27,7 @@ Test job for Codica
     docker compose up
 ```
 
-#### Run db/init.sql script for db
+#### Run [init.sql](db/init.sql) script for db
 I'm using IDEA Database query for it
 ###### for some reasons db doesn't save after restart docker
 
